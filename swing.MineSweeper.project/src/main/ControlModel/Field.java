@@ -13,10 +13,19 @@ public class Field {
     private boolean marked = false;
 
     private List<Field> adjacentSquares = new ArrayList<>();
+    private List<ObserverField> observers = new ArrayList<>();
 
     Field(int row, int column) {
         this.row = row;
         this.column = column;
+    }
+
+    public void recordObservers(ObserverField observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObeservers(EventField event) {
+        observers.stream().forEach(o -> o.eventHasHappened(this, event));
     }
 
     boolean addAdjacentSquare(Field adjacentSquare) {
@@ -39,9 +48,15 @@ public class Field {
         }
     }
 
-    void markingToggle() {
+    void flaggingToggle() {
         if (!opened) {
             marked = !marked;
+
+            if(marked) {
+                notifyObeservers(EventField.FLAG);
+            } else {
+                notifyObeservers(EventField.UNFLAG);
+            }
         }
     }
 
@@ -51,8 +66,12 @@ public class Field {
             opened = true;
 
             if (mined) {
-                //TODO need to implement a new version.
+                notifyObeservers(EventField.TRIGGER);
+                return true;
             }
+
+            setOpened(true);
+            
             if (safeAdjacentSquare()) {
                 adjacentSquares.forEach(adjSquare -> adjSquare.openField());
             }
@@ -92,6 +111,10 @@ public class Field {
 
     public void setOpened(boolean opened) {
         this.opened = opened;
+
+        if(opened) {
+            notifyObeservers(EventField.OPEN);
+        }
     }
 
     public int getRow() {
