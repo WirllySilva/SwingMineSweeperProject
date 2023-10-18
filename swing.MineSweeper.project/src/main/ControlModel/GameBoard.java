@@ -7,9 +7,9 @@ import java.util.function.Predicate;
 
 public class GameBoard implements ObserverField{
 
-    private int numberOfRows;
-    private int numberOfColumns;
-    private int numberOfMines;
+    private final  int numberOfRows;
+    private final int numberOfColumns;
+    private final int numberOfMines;
 
     private final List<Field> fields = new ArrayList<>();
     private final List<Consumer<EventResult>> observers = new ArrayList<>();
@@ -23,6 +23,10 @@ public class GameBoard implements ObserverField{
         connectAdjacentsSquares();
         raffleMines();
     }
+
+        public void forEachField(Consumer<Field> function) {
+            fields.forEach(function);
+        }
 
     public void recordObservers(Consumer<EventResult> observer) {
         observers.add(observer);
@@ -98,5 +102,17 @@ public class GameBoard implements ObserverField{
         fields.stream()
             .filter(f -> f.isMinado())
             .forEach(f -> f.setOpened(true));
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
+
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+    public int getNumberOfMines() {
+        return numberOfMines;
     }
 }
