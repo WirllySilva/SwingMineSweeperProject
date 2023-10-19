@@ -10,7 +10,7 @@ public class Field {
 
     private boolean opened = false;
     private boolean mined = false;
-    private boolean marked = false;
+    private boolean flagged = false;
 
     private List<Field> adjacentSquares = new ArrayList<>();
     private List<ObserverField> observers = new ArrayList<>();
@@ -48,11 +48,11 @@ public class Field {
         }
     }
 
-    void flaggingToggle() {
+    public void flaggingToggle() {
         if (!opened) {
-            marked = !marked;
+            flagged = !flagged;
 
-            if(marked) {
+            if(flagged) {
                 notifyObeservers(EventField.FLAG);
             } else {
                 notifyObeservers(EventField.UNFLAG);
@@ -60,9 +60,9 @@ public class Field {
         }
     }
 
-    boolean openField() {
+    public boolean openField() {
 
-        if (!opened && !marked) {
+        if (!opened && !flagged) {
             opened = true;
 
             if (mined) {
@@ -81,7 +81,7 @@ public class Field {
         }
     }
 
-    boolean safeAdjacentSquare() {
+    public boolean safeAdjacentSquare() {
         return adjacentSquares.stream().noneMatch(adjSquare -> adjSquare.mined);
     }
 
@@ -97,8 +97,8 @@ public class Field {
         mined = false;
     }
 
-    public boolean isMarked() {
-        return marked;
+    public boolean isflagged() {
+        return flagged;
     }
 
     public boolean isMined() {
@@ -127,18 +127,19 @@ public class Field {
 
     boolean goalHasBeenMet() {
         boolean revealed = !mined && opened;
-        boolean safeguarded = marked;
+        boolean safeguarded = flagged;
         return revealed || safeguarded;
     }
 
-    long minesOnAdjacentSquare() {
-        return adjacentSquares.stream().filter(adjSquare -> adjSquare.mined).count();
+    public int minesOnAdjacentSquare() {
+        return (int) adjacentSquares.stream().filter(adjSquare -> adjSquare.mined).count();
     }
 
     void restartGame() {
         opened = false;
         mined = false;
-        marked = false;
+        flagged = false;
+        notifyObeservers(EventField.RESTART);
     }
 
     

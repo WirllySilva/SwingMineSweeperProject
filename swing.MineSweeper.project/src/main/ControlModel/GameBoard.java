@@ -101,6 +101,7 @@ public class GameBoard implements ObserverField{
     private void showMines() {
         fields.stream()
             .filter(f -> f.isMinado())
+            .filter(f -> !f.isflagged())
             .forEach(f -> f.setOpened(true));
     }
 
